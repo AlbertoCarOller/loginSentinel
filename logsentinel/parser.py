@@ -17,9 +17,9 @@ def parse_line(line):
 def main():
     """This function reads each line (logs)"""
     with open(encoding="utf-8", file="samples/access.log") as reader:
-        for numero, line in enumerate(iterable=reader, start=1):
+        for number, line in enumerate(iterable=reader, start=1):
             result = parse_line(line.strip())
-            print(f"[OK] {result.get("ip")}   {result.get("status")}   {result.get("method")}   {result.get("path")}" if result is not None else f"[WARN] Line {numero}: unrecognized format -> {line.strip()}")
+            print(f"[OK] {result["ip"]}   {result["status"]}   {result["method"]}   {result.get("path")}" if result is not None else f"[WARN] Line {number}: unrecognized format -> {line.strip()}")
 
 
 # The program entry, it´s necessary because when we run the program (no imports), '__name__' takes this value
