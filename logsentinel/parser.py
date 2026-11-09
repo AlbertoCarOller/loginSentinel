@@ -14,12 +14,32 @@ def parse_line(line):
 
     return None
 
-def main():
-    """This function reads each line (logs)"""
-    with open(encoding="utf-8", file="samples/access.log") as reader:
+def parse_file(path):
+    """This function reads the file and saves in two lists, in one saves the correct logs, in the other the wrong logs"""
+    with open(encoding="utf-8", file=path) as reader:
+        correct_logs = []
+        wrong_logs = []
+        
         for number, line in enumerate(iterable=reader, start=1):
             result = parse_line(line.strip())
-            print(f"[OK] {result["ip"]}   {result["status"]}   {result["method"]}   {result["get"]}" if result is not None else f"[WARN] Line {number}: unrecognized format -> {line.strip()}")
+            if result is not None:
+                correct_logs.append(result)
+            else:
+                wrong_logs.append((number, line.strip()))
+
+        return correct_logs, wrong_logs
+
+def print_warnings(items):
+    """This function print a list"""
+    for number, line in items:
+        print(f"[WARN] Line {number} -> {line}")
+
+def main():
+    correct_logs, wrong_logs = parse_file("samples/access.log")
+
+    print(f"{len(correct_logs)} requests parsed, {len(wrong_logs)} unrecognized")
+    print("Unrecognized:")
+    print_warnings(wrong_logs)
 
 
 # The program entry, it´s necessary because when we run the program (no imports), '__name__' takes this value
