@@ -17,3 +17,19 @@ def detect_scanners(entries):
                 counts[ip] = 1
 
     return [{"type": "scan", "ip": ip, "count": count} for ip, count in counts.items() if count >= SCAN_THRESHOLD]
+
+def main():
+    correct_logs, wrong_logs = parse_file("samples/access.log")
+    alerts = detect_scanners(correct_logs)
+    print(f"{len(correct_logs)} requests parsed, {len(wrong_logs)} unrecognized\n")
+
+    for alert in alerts:
+        print(f"[ALERT] {alert["type"]}   {alert["ip"]}   {alert["count"]} x 404")
+
+    if wrong_logs:
+        print(f"\n{len(alerts)} alert(s) found")
+    else:
+        print("No threats detected")
+
+if __name__ == "__main__":
+    main()
