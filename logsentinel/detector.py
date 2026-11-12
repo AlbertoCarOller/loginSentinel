@@ -12,11 +12,7 @@ def detect_scanners(entries):
         status = int(entry["status"])
         if status == 404:
             ip = entry["ip"]
-
-            if ip in counts:
-                counts[ip] += 1
-            else:
-                counts[ip] = 1
+            counts[ip] = counts.get(ip, 0) + 1
 
     return [{"type": "scan", "reason": "404 responses", "ip": ip, "count": count} for ip, count in counts.items() if count >= SCAN_THRESHOLD]
 
@@ -30,24 +26,20 @@ def detect_brute_force(entries):
         method = entry["method"]
         if status == 401 and path in LOGIN_PATHS and method == "POST":
             ip = entry["ip"]
-
-            if ip in counts:
-                counts[ip] += 1
-            else:
-                counts[ip] = 1
+            counts[ip] = counts.get(ip, 0) + 1
 
     return [{"type": "brute_force", "reason": "failed logins", "ip": ip, "count": count} for ip, count in counts.items() if count >= BRUTE_FORCE_THRESHOLD]
 
 
 def main():
     correct_logs, wrong_logs = parse_file("samples/access.log")
-    alerts = detect_scanners(correct_logs)
+    alerts = detect_scanners(correct_logs) + detect_brute_force(correct_logs)
     print(f"{len(correct_logs)} requests parsed, {len(wrong_logs)} unrecognized\n")
 
     for alert in alerts:
-        print(f"[ALERT] {alert["type"]}   {alert["ip"]}   {alert["count"]} x 404")
+        print(f"[ALERT] {alert["type"]:15}   {alert["ip"]:10}   {alert["count"]:10} x {alert["reason"]}")
 
-    if wrong_logs:
+    if alerts:
         print(f"\n{len(alerts)} alert(s) found")
     else:
         print("No threats detected")
