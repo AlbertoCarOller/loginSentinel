@@ -1,8 +1,12 @@
 from logsentinel.parser import parse_file # This function is necessary in this file
+import re
 
 SCAN_THRESHOLD = 3 # This const is the min number of '404'
 BRUTE_FORCE_THRESHOLD = 3 # This const is the min number of brute force that allows
 LOGIN_PATHS = ("/login", "/wp-login.php", "/admin/login") # This tuple contains the login´s paths
+INJECTION_PATTERNS = {"sqli" : re.compile(r'(\'\s*(and|or)\b|\bunion\s+select\b|;\s*(drop|delete)\b|\'\s*--)', re.IGNORECASE),
+                        "path_traversal" : re.compile(r'(\.{2}[\\/]|/etc/(shadow|passwd)|win.ini)', re.IGNORECASE, re.IGNORECASE),
+                         "xss" : re.compile(r'(<script\b|(onerror|onload|onclick|onmouseover|onfocus)\s*=|javascript\s*:)')}
 
 def detect_scanners(entries):
     """This function returns a filter list with dicts than contain info about the correct logs"""
