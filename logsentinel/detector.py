@@ -37,7 +37,7 @@ def main():
     print(f"{len(correct_logs)} requests parsed, {len(wrong_logs)} unrecognized\n")
 
     for alert in alerts:
-        print(f"[ALERT] {alert["type"]:15}   {alert["ip"]:10}   {alert["count"]:10} x {alert["reason"]}")
+        print(f"[ALERT] {alert["type"]:15}   {alert["ip"]:15}   {alert["count"]:>10} x {alert["reason"]}")
 
     if alerts:
         print(f"\n{len(alerts)} alert(s) found")
